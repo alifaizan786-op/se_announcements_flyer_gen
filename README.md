@@ -1,70 +1,195 @@
-# Getting Started with Create React App
+# SE Announcements Flyer Generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based flyer builder for the **Ismaili Council for the Southeastern USA**. Produces print-ready US Letter announcements matching the official Local Announcements flyer format — with live preview, overflow protection, and one-click export to PDF, PNG, or JPEG.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Flyer Builder
+- **Live preview** — the flyer updates in real time as you type
+- **Locked to US Letter** — flyer is fixed at 8.5" × 11" (680 × 880px display scale); content never overflows the page
+- **Smart layout engine** — announcements with 3+ Jamatkhanas render full-width; 1–2 JK announcements are grouped by location into 2- or 3-column section grids
+- **Space-between distribution** — rows are spaced equidistantly so the flyer always looks balanced regardless of content count
+- **Alternating section labels** — JK section badges alternate between left and right edges with a divider line extending from the opposite side
+- **Gold accents** — full-width cards have a left gold border; section cards have a top gold border
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Announcement Fields
+| Field | Input Type |
+|---|---|
+| Icon | Upload (PNG, SVG, JPG) — displayed white on colored circle |
+| Icon Background Color | Dropdown: Evergreen / Gold / Charcoal |
+| Title | Text input |
+| Description | Textarea |
+| Date | Date picker |
+| Time | Time picker |
+| Jamatkhanas | Multi-select dropdown with All / Clear shortcuts |
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Overflow Protection
+When a new announcement is added, a `useLayoutEffect` check fires synchronously after the DOM paints. It compares `scrollHeight` vs `clientHeight` on the flyer body. If the content overflows:
+- The announcement is **automatically rolled back** — it is never saved
+- The Add tab is replaced with a contextual error explaining what happened and what to do
+- The error clears automatically once the user removes an announcement and space is freed
 
-### `npm test`
+### Export
+Export the finished flyer as:
+- **PNG** — lossless, ideal for digital sharing
+- **JPEG** — compressed, smaller file size
+- **PDF** — print-ready, preserves exact dimensions
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Exports are rendered via `html2canvas` at 2× scale for sharpness, then saved via `jsPDF` (for PDF) or a data URI anchor (for PNG/JPEG).
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Jamatkhana Locations
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Group | Locations |
+|---|---|
+| Georgia | Atlanta Headquarters, Atlanta Northeast, Atlanta Northwest, Atlanta South, Duluth |
+| Alabama | Birmingham |
+| Tennessee | Chattanooga, Knoxville, Memphis, Nashville |
+| Carolinas | Spartanburg, Raleigh (G), Charleston (G) |
+| Kentucky | Kentucky (G) |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Announcements with **1–2 JKs** appear under a named section. Announcements with **3+ JKs** appear full-width above all sections (intended for region-wide or multi-location events).
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Layout Rules
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+┌─────────────────────────────────────┐
+│           HEADER (dark green)        │
+│        LOCAL ANNOUNCEMENTS          │
+│           MARCH – APRIL 2026        │
+├─────────────────────────────────────┤
+│  Full-width card (3+ JKs)           │◄── Gold left border
+│  Full-width card (3+ JKs)           │
+│                                     │
+│  ─────────────── ATLANTA NORTHEAST ►│
+│  ┌──────────┐ ┌──────────┐          │◄── Gold top border on each card
+│  │ Card     │ │ Card     │          │
+│  └──────────┘ └──────────┘          │
+│                                     │
+│◄ ATLANTA SOUTH ────────────────────│
+│  ┌──────────┐ ┌──────────┐          │
+│  │ Card     │ │ Card     │          │
+│  └──────────┘ └──────────┘          │
+│                                     │
+├─────────────────────────────────────┤
+│  For More Information ─────────────  │◄── Always pinned to bottom
+└─────────────────────────────────────┘
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Tech Stack
 
-## Learn More
+| Concern | Library / Approach |
+|---|---|
+| Framework | React 18 (CRA) |
+| Icons | Lucide React |
+| Typography | Gotham (embedded as base64 `@font-face`) |
+| Export — image | `html2canvas` 1.4.1 via CDN |
+| Export — PDF | `jsPDF` 2.5.1 via CDN |
+| Styling | Inline styles (no CSS-in-JS library) |
+| State | `useState`, `useReducer`-style patterns |
+| Overflow detection | `useLayoutEffect` + `scrollHeight` / `clientHeight` |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Project Structure
 
-### Code Splitting
+```
+se_announcements_flyer_gen/
+├── public/
+│   └── index.html
+├── src/
+│   └── App.js          ← entire application (single-file component)
+├── package.json
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+> All logic, components, and embedded fonts live in `App.js`. The app was intentionally kept single-file for portability and ease of handoff.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Getting Started
 
-### Making a Progressive Web App
+### Prerequisites
+- Node.js 16+
+- npm or yarn
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Install & Run
 
-### Advanced Configuration
+```bash
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# Start dev server
+npm start
+```
 
-### Deployment
+App runs at `http://localhost:3000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Build for Production
 
-### `npm run build` fails to minify
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Output in `/build`. The built app is fully self-contained — no external font requests, no CDN dependencies at build time (export libraries load lazily on first export).
+
+---
+
+## Fonts
+
+Gotham is embedded directly in the component as base64-encoded `@font-face` declarations. No external font requests are made. The four weights used are:
+
+| Weight | File | Role |
+|---|---|---|
+| 400 | GothamBook.ttf | Body text, descriptions, JK lists |
+| 500 | GothamMedium.ttf | UI labels, subtle emphasis |
+| 700 | GothamBold.ttf | Card titles, dates, section headers |
+| 800 | Gotham-Black.otf | Flyer main header |
+
+> **Note:** Gotham is a licensed typeface. The font files are not included in this repository. To embed them, place the `.ttf`/`.otf` files locally, base64-encode each (`base64 -w 0 GothamBold.ttf`), and paste the output into the `@font-face` `src` data URIs at the top of `App.js`.
+
+---
+
+## Brand Colors
+
+| Name | Hex | Usage |
+|---|---|---|
+| Evergreen | `#1C4B3A` | Header background, date text, UI accents |
+| Gold | `#B4995A` | Card accent borders, section badges, footer rule |
+| Cream | `#F5F4EE` | Flyer background |
+| Evergreen (icon) | `#005D35` | Icon background option |
+| Charcoal | `#404040` | Icon background option |
+
+---
+
+## Adding / Editing Announcements
+
+1. Fill in the **Add** tab on the left panel
+2. Upload an icon image (white or transparent PNGs work best — the image is auto-inverted to white)
+3. Select background color, date/time, and Jamatkhanas
+4. Click **+ Add Announcement**
+5. If the announcement doesn't fit, it is automatically rejected with a clear error — remove or shorten an existing announcement to make room
+6. Use the **List** tab to edit or delete any existing announcement
+7. Use the **Settings** tab to change the header title, subtitle, and footer text
+
+---
+
+## Export Notes
+
+- Exports are rendered at **2× pixel density** for print sharpness
+- PDF dimensions match the flyer exactly (no margins added)
+- `html2canvas` and `jsPDF` load asynchronously from Cloudflare CDN on first use — if export fails immediately after page load, wait a moment and retry
+- Icon images uploaded as base64 data URIs export correctly without CORS issues
+
+---
+
+## Maintainer
+
+Built for the **Ismaili Council for the Southeastern USA** by Faizan Ali.
