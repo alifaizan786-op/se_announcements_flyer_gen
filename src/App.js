@@ -54,19 +54,7 @@ const FLYER_BG = '#F5F4EE';
 const getNextIconBg = (count) =>
 	PRESET_COLORS[count % PRESET_COLORS.length].value;
 
-// Is the given hex value one of the presets?
-const isPreset = (hex) => PRESET_COLORS.some((c) => c.value === hex);
 
-// Validate / normalise a hex string — returns null if invalid
-const normaliseHex = (raw) => {
-	const s = raw.trim().replace(/^#+/, '');
-	if (/^[0-9a-fA-F]{6}$/.test(s)) return `#${s.toUpperCase()}`;
-	if (/^[0-9a-fA-F]{3}$/.test(s)) {
-		const [a, b, c] = s;
-		return `#${a}${a}${b}${b}${c}${c}`.toUpperCase();
-	}
-	return null;
-};
 
 const DEFAULT_FORM = {
 	iconUrl: null,

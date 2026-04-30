@@ -1,8 +1,4 @@
-import {
-	useEffect,
-	useState
-} from 'react';
-
+import { useEffect, useState } from 'react';
 
 // Is the given hex value one of the presets?
 const isPreset = (hex) => PRESET_COLORS.some((c) => c.value === hex);
@@ -17,15 +13,14 @@ const normaliseHex = (raw) => {
 	}
 	return null;
 };
-
-const PRESET_COLORS = COLOR_OPTIONS.filter((c) => c.value !== '__custom__');
-
 const COLOR_OPTIONS = [
 	{ label: 'Evergreen', value: '#005D35' },
 	{ label: 'Gold', value: '#B4995A' },
 	{ label: 'Charcoal', value: '#404040' },
 	{ label: 'Custom…', value: '__custom__' },
 ];
+
+const PRESET_COLORS = COLOR_OPTIONS.filter((c) => c.value !== '__custom__');
 
 const INP = {
 	width: '100%',
@@ -39,7 +34,6 @@ const INP = {
 	outline: 'none',
 	background: 'white',
 };
-
 
 // ── Icon Bg Color Picker ───────────────────────────────────────────────────────
 // Renders the preset dropdown + an inline hex input when "Custom…" is selected.
