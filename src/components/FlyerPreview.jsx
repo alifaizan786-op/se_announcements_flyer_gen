@@ -17,7 +17,9 @@ export default function FlyerPreview({
     announcements,
     headerTitle,
     headerSubtitle,
-    footerUrl,
+    RibbonUrl,
+    RibbonTitle,
+    RibbonSubtitle,
     bodyRef,
 }) {
     return (
@@ -87,7 +89,7 @@ export default function FlyerPreview({
                         fontFamily: GOTHAM,
                         fontWeight: 600,
                     }}>
-                    Multifaith family members are warmly welcomed.
+                    {RibbonTitle || 'Multifaith family members are warmly welcomed.'}
                 </small>
                 <span
                     style={{
@@ -97,7 +99,7 @@ export default function FlyerPreview({
                         letterSpacing: '0.2px',
                         fontFamily: GOTHAM,
                     }}>
-                    For More Information — Visit{' '}
+                    {RibbonSubtitle || 'For More Information — Visit'}
                 </span>
                 <span
                     style={{
@@ -106,7 +108,7 @@ export default function FlyerPreview({
                         fontWeight: 600,
                         textDecoration: 'underline',
                     }}>
-                    {footerUrl ||
+                    {RibbonUrl ||
                         'https://prime.southeastcouncil.com/news-feed-southeast'}
                 </span>
             </div>
